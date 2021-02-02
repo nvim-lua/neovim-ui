@@ -1,4 +1,4 @@
-local utils = require('vim.ui._utils')
+local utils = require('ui._utils')
 
 -- TODO(smolck): Just for testing, don't intend to keep this
 local function make_win(text, options)

@@ -1,5 +1,5 @@
-local Border = require('vim.ui.border')
-local utils = require('vim.ui._utils')
+local Border = require('ui.border')
+local utils = require('ui._utils')
 
 _NvimUI_AssociatedBufs = {}
 

@@ -1,4 +1,4 @@
-local utils = require('vim.ui._utils')
+local utils = require('ui.utils')
 
 local Border = {}
 

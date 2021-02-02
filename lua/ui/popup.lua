@@ -4,7 +4,7 @@
 
 local vim = vim
 
-local Border = require("vim.ui.border")
+local Border = require("ui.border")
 
 local popup = {}
 

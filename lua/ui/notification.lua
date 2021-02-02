@@ -1,4 +1,4 @@
-local utils = require('vim.ui._utils')
+local utils = require('ui._utils')
 
 vim.api.nvim_command("hi NotificationInfo guifg=#80ff95")
 vim.api.nvim_command("hi NotificationWarning guifg=#fff454")
