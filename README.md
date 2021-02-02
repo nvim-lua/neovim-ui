@@ -1,6 +1,6 @@
-# nvim-ui
+# neovim-ui
 
-nvim-ui is a semi-official prototype for what will become neovim's new UI module. This effort
+neovim-ui is a semi-official prototype for what will become neovim's new UI module. This effort
 was started because it was observed that numerous plugin authors were duplicating the same
 boilerplate code while creating UI elements. This not only increases duplication of effort,
 but leads to inconsistent UI elements across plugins. The goal of this module is to:
@@ -13,7 +13,7 @@ but leads to inconsistent UI elements across plugins. The goal of this module is
 
 * Requires [Neovim HEAD/nightly](https://github.com/neovim/neovim/releases/tag/nightly) (v0.5 prerelease).
 
-* Install nvim-ui as a plugin. For [vim-plug](https://github.com/junegunn/vim-plug):
+* Install neovim-ui as a plugin. For [vim-plug](https://github.com/junegunn/vim-plug):
   ```
-  :Plug 'mjlbach/nvim-ui'
+  :Plug 'mjlbach/neovim-ui'
   ```
