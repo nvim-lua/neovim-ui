@@ -3,6 +3,6 @@ if exists('g:ui')
 endif
 let g:nvimui = 1
 
-lua << EOF
-require'ui'._root._setup()
-EOF
+" lua << EOF
+"   require'ui'._root._setup()
+" EOF
