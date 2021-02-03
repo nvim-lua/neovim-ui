@@ -20,10 +20,7 @@ function utils.tbl_longest_str(tbl)
   local len = 0
 
   for _,str in pairs(tbl) do
-    local str_len = #str
-    if str_len > len then
-      len = str_len
-    end
+    len = math.max(len, #str)
   end
 
   return len
