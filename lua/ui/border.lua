@@ -1,4 +1,4 @@
-local utils = require('ui.utils')
+local utils = require('ui._utils')
 
 local Border = {}
 
