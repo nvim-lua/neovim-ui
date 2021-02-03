@@ -78,7 +78,7 @@ local function notification(message, options)
       timer:stop()
     end
 
-    if vim.fn.winbufnr(window) ~= -1 then
+    if vim.api.nvim_win_is_valid(window) then
       vim.api.nvim_win_close(window, false)
       vim.api.nvim_win_close(border_win, false)
     end
