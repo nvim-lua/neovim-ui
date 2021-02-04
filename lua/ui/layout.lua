@@ -22,7 +22,10 @@ end
 
 -- TODO(smolck): Is `partition` an accurate/good name?
 local function partition(input, opts)
-  local padding = opts.padding or 0
+  local top_padding = input.top or 0
+  local bottom_padding = input.bottom or 0
+  local right_padding = input.right or 0
+  local left_padding = input.left or 0
 
   for i, win_id in ipairs(input) do
     local row, col
@@ -33,25 +36,24 @@ local function partition(input, opts)
       row = opts.starting_row
       col = opts.starting_col + (opts.max_width * (i - 1))
     end
-    row = row + padding
-    col = col + padding
+    row = row + top_padding
+    col = col + left_padding
 
     if type(win_id) == 'table' then
       local horizontal = not opts.is_horizontal
       partition(win_id, {
         max_height = horizontal and math.floor(opts.max_height / #win_id) or opts.max_height,
         max_width = horizontal and opts.max_width or math.floor(opts.max_width / #win_id),
-        starting_row = row - padding,
-        starting_col = col - padding,
+        starting_row = row - top_padding,
+        starting_col = col - left_padding,
         is_horizontal = horizontal,
-        padding = opts.padding,
       })
     else
       vim.api.nvim_win_set_config(win_id, {
         row = row,
         col = col,
-        width = opts.max_width - padding,
-        height = opts.max_height - padding,
+        width = opts.max_width - left_padding - right_padding,
+        height = opts.max_height - top_padding - bottom_padding,
         relative = 'win',
       })
     end
@@ -78,19 +80,24 @@ local function layout(input)
       starting_row = 0,
       starting_col = col, tbl,
       is_horizontal = true,
-      padding = input.padding,
     })
   end
 end
 
 --layout {
 --  { make_win(),
---    { make_win('col left'), make_win('col right') },
+--    { make_win('col left'), make_win('col right'), top = 5, left = 5, right = 5 },
+--    top = 5,
+--    left = 5,
+--    right = 5
 --  },
 --  {
---    make_win()
+--    make_win(),
+--    make_win(),
+--    top = 5,
+--    left = 5,
+--    right = 5
 --  },
---  padding = 5
 --}
 
 return layout
