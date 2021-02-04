@@ -12,10 +12,10 @@ local function make_win(text, options)
   })
   local win_opts = options
 
-  local bufnr = vim.fn.nvim_create_buf(false, true)
+  local bufnr = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { text or 'This is just for testing' })
 
-  local win_id = vim.fn.nvim_open_win(bufnr, true, win_opts)
+  local win_id = vim.api.nvim_open_win(bufnr, true, win_opts)
 
   return win_id
 end
