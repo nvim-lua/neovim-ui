@@ -3,7 +3,6 @@ local utils = require('ui._utils')
 
 _NvimUI_AssociatedBufs = {}
 
-
 local clear_buf_on_leave = function(bufnr)
   vim.cmd(
     string.format(
@@ -131,19 +130,24 @@ end
 --- Create window that takes up certain percentags of the current screen.
 ---
 --- Works regardless of current buffers, tabs, splits, etc.
---@param col_range number | Table:
---                  If number, then center the window taking up this percentage of the screen.
---                  If table, first index should be start, second_index should be end
---@param row_range number | Table:
---                  If number, then center the window taking up this percentage of the screen.
---                  If table, first index should be start, second_index should be end
-function win_float.percentage_range_window(col_range, row_range, options)
-  options = utils.tbl_apply_defaults(options, win_float.default_options)
+---@param col_range number/table:
+---                  If number, then center the window taking up this percentage of the screen.
+---                  If table, first index should be start, second_index should be end
+---@param row_range number/table:
+---                  If number, then center the window taking up this percentage of the screen.
+---                  If table, first index should be start, second_index should be end
+---@param o table:
+---                 o.win_opts: window options to be applied
+---                 o.buf_opts: buffer options to be applied
+function win_float.percentage_range_window(col_range, row_range, o)
+  o = utils.tbl_apply_defaults(o, win_float.default_options)
 
-  local win_opts = win_float.default_opts(options)
-  win_opts.relative = "editor"
+  --[[ move to its own function ------------------------------------------------]]
+  local win = win_float.default_opts(o)
+  win.relative = "editor"
 
   local height_percentage, row_start_percentage
+
   if type(row_range) == 'number' then
     assert(row_range <= 1)
     assert(row_range > 0)
@@ -156,8 +160,8 @@ function win_float.percentage_range_window(col_range, row_range, options)
     error(string.format("Invalid type for 'row_range': %p", row_range))
   end
 
-  win_opts.height = math.ceil(vim.o.lines * height_percentage)
-  win_opts.row = math.ceil(vim.o.lines *  row_start_percentage)
+  win.height = math.ceil(vim.o.lines * height_percentage)
+  win.row = math.ceil(vim.o.lines *  row_start_percentage)
 
   local width_percentage, col_start_percentage
   if type(col_range) == 'number' then
@@ -172,29 +176,45 @@ function win_float.percentage_range_window(col_range, row_range, options)
     error(string.format("Invalid type for 'col_range': %p", col_range))
   end
 
-  win_opts.col = math.floor(vim.o.columns * col_start_percentage)
-  win_opts.width = math.floor(vim.o.columns * width_percentage)
+  win.col = math.floor(vim.o.columns * col_start_percentage)
+  win.width = math.floor(vim.o.columns * width_percentage)
 
-  local bufnr = options.bufnr or vim.api.nvim_create_buf(false, true)
-  local win_id = vim.api.nvim_open_win(bufnr, true, win_opts)
-  vim.api.nvim_win_set_buf(win_id, bufnr)
+  --[[ move to its own function ------------------------------------------------]]
 
-  vim.cmd('setlocal nocursorcolumn')
-  vim.api.nvim_win_set_option(win_id, 'winblend', options.winblend)
+  local ret = {}
+  ret.bufnr = o.bufnr or vim.api.nvim_create_buf(false, true)
+  ret.win_id = vim.api.nvim_open_win(ret.bufnr, true, win)
 
-  local border = Border:new(bufnr, win_id, win_opts, {})
+  vim.api.nvim_win_set_buf(ret.win_id, ret.bufnr)
 
-  _NvimUI_AssociatedBufs[bufnr] = { win_id, border.win_id, }
+  for k, v in pairs(vim.tbl_extend("keep", o.buf_opts or {}, {
+    bufhidden = "wipe",
+    buflisted = false,
+    swapfile = false,
+    buftype = "nofile"
+  })) do vim.api.nvim_buf_set_option(ret.bufnr, k, v) end
 
-  clear_buf_on_leave(bufnr)
+  for k, v in pairs(vim.tbl_extend("keep", o.win_opts or {}, {
+    signcolumn = 'no',
+    foldenable = false,
+    cursorcolumn = false,
+    winblend = o.winblend,
+    list = false,
+    wrap = false,
+    spell = false,
+    number = false,
+    relativenumber = false,
+    winhl = "NormalFloat:Normal"
+  })) do vim.api.nvim_win_set_option(ret.win_id, k, v) end
 
-  return {
-    bufnr = bufnr,
-    win_id = win_id,
+  local border = Border:new(ret.bufnr, ret.win_id, o.win_opts, {})
+  ret.border_win_id = border.bufnr
+  ret.border_bufnr = border.bufnr
 
-    border_bufnr = border.bufnr,
-    border_win_id = border.win_id,
-  }
+  _NvimUI_AssociatedBufs[ret.bufnr] = { ret.win_id, border.win_id, }
+
+  clear_buf_on_leave(ret.bufnr)
+  return ret
 end
 
 function win_float.clear(bufnr)
