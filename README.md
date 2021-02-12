@@ -7,7 +7,7 @@ but leads to inconsistent UI elements across plugins. The goal of this module is
 
 * Provide a cohesive set of UI elements that work well together
 * Support internal neovim UI elements that have arisen on an "as-needed" basis
-* Make UI easy to use, to encourge more plugins to take advantage of neovim's UI system
+* Make UI easy to use, to encourage more plugins to take advantage of neovim's UI system
 
 ## Install
 
